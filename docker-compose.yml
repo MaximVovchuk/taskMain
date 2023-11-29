@@ -1,0 +1,14 @@
+networks:
+  infinispan-network:
+    driver: bridge
+services:
+  # Start infinispan
+  infinispan-node:
+    image: infinispan/server:14.0.9.Final
+    networks:
+      - infinispan-network
+    environment:
+      - USER=admin
+      - PASS=password
+    ports:
+      - "11222-11242:11222"

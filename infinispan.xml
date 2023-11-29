@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<distributed-cache name="my-cache" mode="SYNC" remote-timeout="17500" statistics="true">
+    <locking concurrency-level="1000" acquire-timeout="15000" striping="false"/>
+    <state-transfer timeout="60000"/>
+</distributed-cache>
