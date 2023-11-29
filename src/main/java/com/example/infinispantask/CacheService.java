@@ -10,8 +10,6 @@ import org.infinispan.manager.DefaultCacheManager;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-
 
 @Service
 public class CacheService {
@@ -63,24 +61,5 @@ public class CacheService {
     public void checkCache() {
         cachePut();
     }
-
-
-//    @SneakyThrows
-//    @Cacheable("my-cache")
-//    public Department getWithSpring() {
-//        Thread.sleep(2000);
-//        return dao.checkInfo();
-//    }
-//
-//    @CachePut("my-cache")
-//    public Department cachePut() {
-//        Department oldInfo = getWithSpring();
-//        Department newInfo = dao.checkInfo();
-//        if (oldInfo!=null && !oldInfo.getDepartmentName().equals(newInfo.getDepartmentName())) {
-//            System.out.println("CHANGE!");
-//            cache.put(1L, newInfo);
-//        }
-//        return newInfo;
-//    }
 
 }
