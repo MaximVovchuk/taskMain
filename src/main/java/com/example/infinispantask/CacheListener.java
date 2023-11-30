@@ -20,6 +20,7 @@ public class CacheListener {
     }
 
 
+    //TODO listen entries only with specified, not all
     @CacheEntryModified
     public void modified(CacheEntryModifiedEvent<Long,Department> event) {
        System.out.println("Cache entry modified: " + event.getNewValue().toString());
