@@ -1,7 +1,6 @@
 package com.example.infinispantask;
 
 import com.example.infinispantask.entities.Department;
-import lombok.SneakyThrows;
 import org.infinispan.Cache;
 import org.infinispan.commons.api.CacheContainerAdmin;
 import org.infinispan.configuration.cache.Configuration;
@@ -31,35 +30,28 @@ public class CacheService {
         this.cache.addListener(cacheListener);
     }
 
-    @SneakyThrows
-    public Department getWithSpring() {
-        Thread.sleep(2000);
+    public Department getCache() {
         if (cache.containsKey(1L)) {
             return cache.get(1L);
         } else {
-            Department newInfo = dao.checkInfo();
+            Department newInfo = dao.getFullDepartmentInfo();
             cache.put(1L, newInfo);
             return newInfo;
         }
     }
 
-    public Department cachePut() {
+    @Scheduled(fixedDelay = 20000)
+    public void putCache() {
         Department oldInfo = cache.get(1L);
-        Department newInfo = dao.checkInfo();
         if (oldInfo == null) {
+            Department newInfo = dao.getFullDepartmentInfo();
             cache.put(1L, newInfo);
         } else {
-            if (!oldInfo.equals(newInfo)) {
-                System.out.println("CHANGE!");
+            String newName = dao.getDepartmentName();
+            if (!newName.equals(oldInfo.getDepartmentName())) {
+                Department newInfo = dao.getFullDepartmentInfo();
                 cache.put(1L, newInfo);
             }
         }
-        return newInfo;
     }
-
-    @Scheduled(fixedDelay = 20000)
-    public void checkCache() {
-        cachePut();
-    }
-
 }

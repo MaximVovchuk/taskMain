@@ -22,7 +22,7 @@ public class ChatWebsocketEndpoint {
     @OnOpen
     public void onOpen(Session session) {
         sessions.add(session);
-        sendUpdate(cacheService.getWithSpring().toString());
+        sendUpdate(cacheService.getCache().toString());
     }
 
     @OnClose
