@@ -15,66 +15,59 @@ import java.net.http.HttpResponse;
 public class Dao {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final String baseUrl = "http://localhost:8081/";
+    private final HttpClient httpClient = HttpClient.newHttpClient();
 
     public Department getFullDepartmentInfo() {
         Department department = sendDepartmentRequest(baseUrl);
-        if (department != null) {
-            System.out.println("Department: " + department);
-            return department;
-        } else {
-            System.out.println("Failed to get a response from the server.");
-            throw new IllegalArgumentException("Failed to get a response from the server.");
-        }
+        System.out.println("Department: " + department);
+        return department;
     }
 
     public String getDepartmentName() {
         String name = sendNameRequest(baseUrl + "name");
-        if (name != null) {
-            System.out.println("Name: " + name);
-            return name;
-        } else {
-            System.out.println("Failed to get a response from the server.");
-            throw new IllegalArgumentException("Failed to get a response from the server.");
-        }
+        System.out.println("Name: " + name);
+        return name;
     }
 
     private String sendNameRequest(String url) {
         try {
-            HttpClient httpClient = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .GET()
                     .build();
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() == 200) {
-                return response.body();
-            } else {
-                System.out.println("Error: " + response.statusCode());
-                return null;
-            }
+            handleResponseErrors(response);
+            return response.body();
         } catch (Exception e) {
-            e.printStackTrace();
+            handleRequestException(e);
             return null;
         }
     }
 
     private Department sendDepartmentRequest(String url) {
         try {
-            HttpClient httpClient = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .GET()
                     .build();
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() == 200) {
-                return objectMapper.readValue(response.body(), Department.class);
-            } else {
-                System.out.println("Error: " + response.statusCode());
-                return null;
-            }
+            handleResponseErrors(response);
+            return objectMapper.readValue(response.body(), Department.class);
         } catch (Exception e) {
-            e.printStackTrace();
+            handleRequestException(e);
             return null;
         }
+    }
+
+    private void handleResponseErrors(HttpResponse<?> response) {
+        if (response.statusCode() != 200) {
+            System.err.println("Error: " + response.statusCode());
+            throw new IllegalArgumentException("Failed to get a successful response from the server.");
+        }
+    }
+
+    private void handleRequestException(Exception e) {
+        e.printStackTrace();
+        throw new IllegalArgumentException("Failed to execute the request.", e);
     }
 }
